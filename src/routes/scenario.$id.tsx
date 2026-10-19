@@ -47,11 +47,11 @@ function ScenarioPage() {
 
 function ScenarioView({ scenario }: { scenario: Scenario }) {
   const navigate = useNavigate();
-  const [activeId, setActiveId] = useState(scenario.timelines[0].id);
+  const [activeId, setActiveId] = useState(scenario.timelines[0]!.id);
   const [note, setNote] = useState("");
   const [closed, setClosed] = useState(false);
   useEffect(() => setNote(getNote(scenario.id)), [scenario.id]);
-  const timeline = scenario.timelines.find((t) => t.id === activeId) ?? scenario.timelines[0];
+  const timeline = scenario.timelines.find((t) => t.id === activeId) ?? scenario.timelines[0]!;
   const idx = scenario.timelines.indexOf(timeline);
   const isDemo = scenario.mode === "demo";
 

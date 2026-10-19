@@ -9,7 +9,7 @@ const TL_COLORS = ["var(--primary)", "var(--teal)", "var(--dusk)"];
 
 export function TimelineExplorer({ timeline }: { timeline: Timeline }) {
   const [active, setActive] = useState(0);
-  const ev = timeline.events[Math.min(active, timeline.events.length - 1)];
+  const ev = timeline.events[Math.min(active, timeline.events.length - 1)]!;
   const onKey = (e: KeyboardEvent) => {
     if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); setActive((a) => Math.min(a + 1, timeline.events.length - 1)); }
     if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)); }
@@ -76,7 +76,7 @@ export function FinancialDashboard({ scenario, activeId }: { scenario: Scenario;
     scenario.timelines.forEach((t) => { row[t.id] = t.financial_series[i]?.value ?? 0; });
     return row;
   });
-  const active = scenario.timelines.find((t) => t.id === activeId) ?? scenario.timelines[0];
+  const active = scenario.timelines.find((t) => t.id === activeId) ?? scenario.timelines[0]!;
   const fmt = (v: number) => formatMoney(v, f.currency);
   const pieColors = ["var(--primary-deep)", "var(--primary)", "var(--border)", "var(--teal)"];
   const total = f.breakdown.reduce((a, b) => a + b.value, 0) || 1;
