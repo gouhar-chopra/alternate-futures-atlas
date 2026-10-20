@@ -45,7 +45,8 @@ export const simulateScenario = createServerFn({ method: "POST" })
 
     const timelineCount = data.style === "multiple" ? 3 : 2;
     const user = [
-      `Decision: ${data.decision}`,
+      `What-if (the counterfactual decision to explore): ${data.decision}`,
+      data.situation && `Situation at the time (background, options, motivations, constraints — use this to ground the narrative, events, trade-offs and reflection): ${data.situation}`,
       data.year && `Approximate year: ${data.year}`,
       data.location && `Location: ${data.location}`,
       data.area && `Life area: ${data.area}`,

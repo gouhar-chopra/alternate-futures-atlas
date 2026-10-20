@@ -102,13 +102,25 @@
 .reveal { opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .8s ease; }
 .reveal.in { opacity: 1; transform: none; }
 
-/* Walking crowd */
+/* Walking crowd: the procession travels while each figure runs a real gait cycle */
 @keyframes crowd-walk { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
-@keyframes crowd-step { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-.crowd-track { display: flex; width: max-content; animation: crowd-walk 70s linear infinite; will-change: transform; }
-.crowd-track img { animation: crowd-step .55s ease-in-out infinite; }
-.crowd-track.slow { animation-duration: 110s; opacity: .35; }
-.crowd-track.slow img { animation-duration: .7s; }
+.crowd-track { display: flex; align-items: flex-end; width: max-content; animation: crowd-walk 90s linear infinite; will-change: transform; color: var(--foreground); }
+.crowd-track.slow { animation-duration: 140s; opacity: .3; }
+.crowd-track.slow .walker { transform: scaleX(-1); }
+
+@keyframes w-thigh { 0%,100% { transform: rotate(-26deg); } 50% { transform: rotate(24deg); } }
+@keyframes w-shin { 0%,45% { transform: rotate(2deg); } 50% { transform: rotate(12deg); } 70% { transform: rotate(58deg); } 92% { transform: rotate(4deg); } }
+@keyframes w-arm { 0%,100% { transform: rotate(24deg); } 50% { transform: rotate(-24deg); } }
+@keyframes w-fore { 0%,100% { transform: rotate(4deg); } 50% { transform: rotate(-22deg); } }
+@keyframes w-bob { 0%,50%,100% { transform: translateY(0); } 25%,75% { transform: translateY(-2.5px); } }
+.walker * { transform-box: view-box; }
+.walker .w-body { animation: w-bob var(--d) ease-in-out var(--delay) infinite; }
+.walker .w-thigh { transform-origin: 20px 62px; animation: w-thigh var(--d) ease-in-out var(--delay) infinite; }
+.walker .w-shin { transform-origin: 20px 88px; animation: w-shin var(--d) linear var(--delay) infinite; }
+.walker .w-arm { transform-origin: 20px 27px; animation: w-arm var(--d) ease-in-out var(--delay) infinite; }
+.walker .w-fore { transform-origin: 20px 46px; animation: w-fore var(--d) ease-in-out var(--delay) infinite; }
+/* opposite side runs half a cycle out of phase */
+.walker .back { animation-delay: calc(var(--delay) - var(--d) / 2); }
 
 /* Branch drawing */
 @keyframes draw { to { stroke-dashoffset: 0; } }

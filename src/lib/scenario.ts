@@ -21,6 +21,7 @@ export const HORIZONS = [1, 3, 5, 10] as const;
 
 export const DecisionInputSchema = z.object({
   decision: z.string().trim().min(15, "Please describe the decision in a little more detail.").max(800),
+  situation: z.string().trim().max(1500, "Please keep the situation under 1500 characters.").optional().default(""),
   year: z.string().trim().max(10).optional().default(""),
   location: z.string().trim().max(80).optional().default(""),
   area: z.string().trim().max(40).optional().default(""),
