@@ -50,11 +50,19 @@ export function WalkingCrowdTransition() {
         </div>
       </div>
       <div className="relative mt-14 h-[150px] sm:h-[200px] md:h-[260px]" aria-hidden>
-        <div className="crowd-track slow absolute bottom-6 left-0 h-[55%]">
-          {[0, 1].map((i) => <img key={i} src={crowd} alt="" width={1920} height={640} className="h-full w-auto max-w-none -scale-x-100" loading="lazy" />)}
+        <div className="crowd-track slow absolute bottom-8 left-0 h-[55%]" style={{ animationDirection: "normal" }}>
+          {[0, 1].map((c) => (
+            <div key={c} className="flex h-full items-end">
+              {BACK.map((p) => <div key={p.key} className="flex h-full items-end" style={{ paddingRight: p.gap }}><div className="h-full" style={{ aspectRatio: "1 / 3", transform: `scale(${p.look.scale})`, transformOrigin: "bottom" }}><Walker look={{ ...p.look, scale: 1 }} duration={p.duration * 1.1} delay={p.delay} /></div></div>)}
+            </div>
+          ))}
         </div>
         <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
-          {[0, 1].map((i) => <img key={i} src={crowd} alt="" width={1920} height={640} className="h-full w-auto max-w-none" loading="lazy" />)}
+          {[0, 1].map((c) => (
+            <div key={c} className="flex h-full items-end">
+              {FRONT.map((p) => <div key={p.key} className="flex h-full items-end" style={{ paddingRight: p.gap * 1.6 }}><div className="h-full" style={{ aspectRatio: "1 / 3", transform: `scale(${p.look.scale})`, transformOrigin: "bottom" }}><Walker look={{ ...p.look, scale: 1 }} duration={p.duration} delay={p.delay} /></div></div>)}
+            </div>
+          ))}
         </div>
       </div>
       <span className="sr-only">An illustrated crowd of people walking from the familiar world into an imagined one.</span>
