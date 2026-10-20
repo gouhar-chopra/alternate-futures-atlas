@@ -15,7 +15,7 @@ function Leg({ cls }: { cls: string }) {
     </g>
   );
 }
-function Arm({ cls, bag }: { cls: string; bag?: boolean }) {
+function Arm({ cls, bag }: { cls: string; bag?: boolean | undefined }) {
   return (
     <g className={`w-arm ${cls}`}>
       <line x1={SHOULDER.x} y1={SHOULDER.y} x2={SHOULDER.x} y2={46} />
@@ -63,7 +63,7 @@ export function makeCrowd(n: number, seed = 1) {
   const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
   return Array.from({ length: n }, (_, i) => ({
     look: {
-      coat: COATS[Math.floor(rnd() * COATS.length)],
+      coat: COATS[Math.floor(rnd() * COATS.length)] ?? "short",
       hat: rnd() > 0.8,
       bun: rnd() > 0.7,
       bag: rnd() > 0.7,
