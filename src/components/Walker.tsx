@@ -28,13 +28,11 @@ function Arm({ cls, bag }: { cls: string; bag?: boolean }) {
 }
 
 export function Walker({ look, duration, delay }: { look: WalkerLook; duration: number; delay: number }) {
-  const w = 40 * look.scale;
-  const h = 120 * look.scale;
   return (
     <svg
       viewBox="0 0 40 120"
-      width={w}
-      height={h}
+      width="100%"
+      height="100%"
       className="walker shrink-0 overflow-visible"
       style={{ ["--d" as string]: `${duration}s`, ["--delay" as string]: `${delay}s`, opacity: look.tone }}
       aria-hidden

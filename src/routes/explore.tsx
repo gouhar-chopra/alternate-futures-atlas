@@ -26,7 +26,7 @@ export const Route = createFileRoute("/explore")({
   component: Explore,
 });
 
-const EMPTY: DecisionInput = { decision: "", year: "", location: "", area: "", hoped: "", constraints: "", curious: "", salary: "", style: "balanced", horizon: 3 };
+const EMPTY: DecisionInput = { decision: "", situation: "", year: "", location: "", area: "", hoped: "", constraints: "", curious: "", salary: "", style: "balanced", horizon: 3 };
 const SUGGESTIONS = [
   "What if I had chosen design instead of engineering?",
   "What if I had started my business earlier?",
@@ -115,6 +115,22 @@ function Explore() {
             {SUGGESTIONS.map((s) => (
               <button type="button" key={s} onClick={() => pick(s)} className="border px-3 py-1.5 text-sm hover:border-primary hover:text-primary">{s}</button>
             ))}
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="situation" className="eyebrow">Describe your situation</Label>
+          <p id="situation-help" className="mt-2 text-sm text-muted-foreground">Give us the background, context, and details that will help us explore this possibility.</p>
+          <Textarea
+            id="situation"
+            value={form.situation}
+            onChange={(e) => set("situation", e.target.value.slice(0, 1500))}
+            placeholder="What was happening at the time, the options you had, and what influenced your decision. For example: I was choosing between a college close to home and one in another city. Moving away excited me, but I also had financial and family considerations."
+            className={`${field} mt-3 min-h-32 p-5 text-base focus-visible:ring-primary/40`}
+            aria-describedby="situation-help situation-count"
+          />
+          <div className="mt-2 flex justify-end text-sm">
+            <span id="situation-count" className="font-mono text-muted-foreground">{form.situation.length}/1500</span>
           </div>
         </div>
 

@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
-import crowd from "@/assets/crowd.png";
+import { Walker, makeCrowd } from "@/components/Walker";
+
+const FRONT = makeCrowd(16, 7);
+const BACK = makeCrowd(22, 31);
 
 /** Cream-to-mint scroll transition with a continuously walking monochrome crowd. */
 export function WalkingCrowdTransition() {
