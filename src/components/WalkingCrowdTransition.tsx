@@ -69,7 +69,7 @@ export function WalkingCrowdTransition() {
                 return (
                   <div key={i} className="walker-strip absolute top-0 h-full" style={{ left: `${(a / IMG_W) * 100}%`, width: `${(w / IMG_W) * 100}%`, animationDelay: delay }}>
                     <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: `${HIP * 100}%` }}>
-                      <img src={walkers.url} alt="" className="absolute top-0 h-[calc(100%/var(--hip))] max-w-none" style={{ ...img, ["--hip" as string]: HIP }} />
+                      <img src={walkers.url} alt="" className="absolute top-0 max-w-none" style={{ ...img, height: `${100 / HIP}%` }} />
                     </div>
                     <div className="walker-legs absolute inset-x-0 bottom-0 overflow-hidden" style={{ top: `${HIP * 100}%`, animationDelay: delay }}>
                       <img src={walkers.url} alt="" className="absolute bottom-0 max-w-none" style={{ ...img, height: `${100 / (1 - HIP)}%` }} />

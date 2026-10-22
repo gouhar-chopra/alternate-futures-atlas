@@ -107,9 +107,12 @@
 .crowd-track { display: flex; align-items: flex-end; width: max-content; animation: crowd-walk 90s linear infinite; will-change: transform; color: var(--foreground); }
 .crowd-track.slow { animation-duration: 140s; opacity: .3; }
 .crowd-track.slow .walker { transform: scaleX(-1); }
-@keyframes crowd-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-1.2%); } }
-.crowd-bob { animation: crowd-bob .55s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .crowd-track, .crowd-bob { animation: none; } }
+/* Each person bobs twice per stride; legs swing from the hip line */
+@keyframes walker-bob { 0%,50%,100% { transform: translateY(0); } 25%,75% { transform: translateY(-1.4%); } }
+@keyframes walker-legs { 0%,100% { transform: skewX(-5deg) scaleY(.985); } 25%,75% { transform: skewX(0) scaleY(1); } 50% { transform: skewX(5deg) scaleY(.985); } }
+.walker-strip { animation: walker-bob 1.1s ease-in-out infinite; }
+.walker-legs { transform-origin: 50% 0; animation: walker-legs 1.1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .crowd-track, .walker-strip, .walker-legs { animation: none; } }
 
 @keyframes w-thigh { 0%,100% { transform: rotate(-26deg); } 50% { transform: rotate(24deg); } }
 @keyframes w-shin { 0%,45% { transform: rotate(2deg); } 50% { transform: rotate(12deg); } 70% { transform: rotate(58deg); } 92% { transform: rotate(4deg); } }
