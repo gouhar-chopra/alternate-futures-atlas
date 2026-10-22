@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import crowdB from "@/assets/crowd-b.jpg";
-import crowdC from "@/assets/crowd-c.jpg";
+import walkers from "@/assets/city-walkers.png.asset.json";
 
 /** Cream-to-mint scroll transition with a continuously walking monochrome crowd. */
 export function WalkingCrowdTransition() {
@@ -54,11 +53,8 @@ export function WalkingCrowdTransition() {
         <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
           {[0, 1].map((c) => (
             <div key={c} className="relative flex h-full">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="crowd-frames relative h-full">
-                  <img src={crowdB} alt="" className="h-full w-auto mix-blend-multiply" />
-                  <img src={crowdC} alt="" className="crowd-frame-alt absolute inset-0 h-full w-auto mix-blend-multiply" />
-                </div>
+              {[0, 1].map((i) => (
+                <img key={i} src={walkers.url} alt="" className="crowd-bob h-full w-auto max-w-none mix-blend-multiply" />
               ))}
             </div>
           ))}
