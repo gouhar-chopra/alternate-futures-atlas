@@ -1,6 +1,14 @@
 import { useEffect, useRef } from "react";
 import walkers from "@/assets/city-walkers.png.asset.json";
 
+const IMG_W = 1920;
+const IMG_H = 640;
+/** Hip line as a fraction of image height; legs below it sway from this joint. */
+const HIP = 0.57;
+const STEP = 1.1;
+/** Horizontal cut points between the people in the original drawing. */
+const CUTS = [0, 165, 313, 464, 620, 783, 930, 1073, 1217, 1355, 1484, 1735, 1920];
+
 /** Cream-to-mint scroll transition with a continuously walking monochrome crowd. */
 export function WalkingCrowdTransition() {
   const ref = useRef<HTMLElement>(null);
@@ -50,12 +58,25 @@ export function WalkingCrowdTransition() {
         </div>
       </div>
       <div className="relative mt-14 h-[150px] sm:h-[200px] md:h-[260px]" aria-hidden>
-        <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
-          {[0, 1].map((c) => (
-            <div key={c} className="relative flex h-full">
-              {[0, 1].map((i) => (
-                <img key={i} src={walkers.url} alt="" className="crowd-bob h-full w-auto max-w-none mix-blend-multiply" />
-              ))}
+        <div className="crowd-track absolute bottom-0 left-0 h-full mix-blend-multiply" style={{ animationDirection: "reverse" }}>
+          {[0, 1, 2, 3].map((c) => (
+            <div key={c} className="relative h-full" style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}>
+              {CUTS.slice(0, -1).map((a, i) => {
+                const b = CUTS[i + 1]!;
+                const w = b - a;
+                const delay = `${-((i * 0.37) % 1) * STEP}s`;
+                const img = { left: `${(-a / w) * 100}%`, width: `${(IMG_W / w) * 100}%` };
+                return (
+                  <div key={i} className="walker-strip absolute top-0 h-full" style={{ left: `${(a / IMG_W) * 100}%`, width: `${(w / IMG_W) * 100}%`, animationDelay: delay }}>
+                    <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: `${HIP * 100}%` }}>
+                      <img src={walkers.url} alt="" className="absolute top-0 h-[calc(100%/var(--hip))] max-w-none" style={{ ...img, ["--hip" as string]: HIP }} />
+                    </div>
+                    <div className="walker-legs absolute inset-x-0 bottom-0 overflow-hidden" style={{ top: `${HIP * 100}%`, animationDelay: delay }}>
+                      <img src={walkers.url} alt="" className="absolute bottom-0 max-w-none" style={{ ...img, height: `${100 / (1 - HIP)}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ))}
         </div>
