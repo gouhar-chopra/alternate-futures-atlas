@@ -58,7 +58,7 @@ export function WalkingCrowdTransition() {
         </div>
       </div>
       <div className="relative mt-14 h-[150px] sm:h-[200px] md:h-[260px]" aria-hidden>
-        <div className="crowd-track absolute bottom-0 left-0 h-full mix-blend-multiply" style={{ animationDirection: "reverse" }}>
+        <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
           {[0, 1, 2, 3].map((c) => (
             <div key={c} className="relative h-full" style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}>
               {CUTS.slice(0, -1).map((a, i) => {
