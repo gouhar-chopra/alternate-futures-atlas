@@ -1,8 +1,6 @@
 import { useEffect, useRef } from "react";
-import { Walker, makeCrowd } from "@/components/Walker";
-
-const FRONT = makeCrowd(16, 7);
-const BACK = makeCrowd(22, 31);
+import crowdB from "@/assets/crowd-b.jpg";
+import crowdC from "@/assets/crowd-c.jpg";
 
 /** Cream-to-mint scroll transition with a continuously walking monochrome crowd. */
 export function WalkingCrowdTransition() {
@@ -53,17 +51,15 @@ export function WalkingCrowdTransition() {
         </div>
       </div>
       <div className="relative mt-14 h-[150px] sm:h-[200px] md:h-[260px]" aria-hidden>
-        <div className="crowd-track slow absolute bottom-8 left-0 h-[55%]" style={{ animationDirection: "normal" }}>
-          {[0, 1].map((c) => (
-            <div key={c} className="flex h-full items-end">
-              {BACK.map((p) => <div key={p.key} className="flex h-full items-end" style={{ paddingRight: p.gap }}><div className="h-full" style={{ aspectRatio: "1 / 3", transform: `scale(${p.look.scale})`, transformOrigin: "bottom" }}><Walker look={{ ...p.look, scale: 1 }} duration={p.duration * 1.1} delay={p.delay} /></div></div>)}
-            </div>
-          ))}
-        </div>
         <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
           {[0, 1].map((c) => (
-            <div key={c} className="flex h-full items-end">
-              {FRONT.map((p) => <div key={p.key} className="flex h-full items-end" style={{ paddingRight: p.gap * 1.6 }}><div className="h-full" style={{ aspectRatio: "1 / 3", transform: `scale(${p.look.scale})`, transformOrigin: "bottom" }}><Walker look={{ ...p.look, scale: 1 }} duration={p.duration} delay={p.delay} /></div></div>)}
+            <div key={c} className="relative flex h-full">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="crowd-frames relative h-full">
+                  <img src={crowdB} alt="" className="h-full w-auto mix-blend-multiply" />
+                  <img src={crowdC} alt="" className="crowd-frame-alt absolute inset-0 h-full w-auto mix-blend-multiply" />
+                </div>
+              ))}
             </div>
           ))}
         </div>

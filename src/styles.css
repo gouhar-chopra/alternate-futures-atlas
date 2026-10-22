@@ -107,6 +107,9 @@
 .crowd-track { display: flex; align-items: flex-end; width: max-content; animation: crowd-walk 90s linear infinite; will-change: transform; color: var(--foreground); }
 .crowd-track.slow { animation-duration: 140s; opacity: .3; }
 .crowd-track.slow .walker { transform: scaleX(-1); }
+@keyframes crowd-step { 0%,49.9% { opacity: 0; } 50%,100% { opacity: 1; } }
+.crowd-frame-alt { animation: crowd-step .9s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .crowd-track, .crowd-frame-alt { animation: none; } }
 
 @keyframes w-thigh { 0%,100% { transform: rotate(-26deg); } 50% { transform: rotate(24deg); } }
 @keyframes w-shin { 0%,45% { transform: rotate(2deg); } 50% { transform: rotate(12deg); } 70% { transform: rotate(58deg); } 92% { transform: rotate(4deg); } }
