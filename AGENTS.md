@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Render the transition crowd as repeated intact asset images with one CSS track animation, rather than per-person SVG clipping, to keep rendering lightweight and preserve the artwork.
