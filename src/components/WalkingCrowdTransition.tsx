@@ -1,13 +1,51 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import walkers from "@/assets/city-walkers.png.asset.json";
+import { CROWD_FIGURES } from "@/lib/crowd-geometry";
 
 const IMG_W = 1920;
 const IMG_H = 640;
-/** Hip line as a fraction of image height; legs below it sway from this joint. */
-const HIP = 0.57;
 const STEP = 1.1;
-/** Horizontal cut points between the people in the original drawing. */
-const CUTS = [0, 165, 313, 464, 620, 783, 930, 1073, 1217, 1355, 1484, 1735, 1920];
+
+/** One tile of the crowd: each person's two legs are cut from the original art and swing from the hip in turn. */
+function CrowdTile({ tile }: { tile: number }) {
+  const uid = useId().replace(/:/g, "") + tile;
+  return (
+    <svg viewBox={`0 0 ${IMG_W} ${IMG_H}`} className="h-full w-auto shrink-0 overflow-visible" style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}>
+      <defs>
+        {CROWD_FIGURES.map((f, i) => (
+          <g key={i}>
+            <clipPath id={`${uid}s${i}`}><rect x={f.x0} y={0} width={f.x1 - f.x0} height={IMG_H} /></clipPath>
+            <mask id={`${uid}b${i}`} maskUnits="userSpaceOnUse" x={0} y={0} width={IMG_W} height={IMG_H}>
+              <rect x={0} y={0} width={IMG_W} height={IMG_H} fill="white" />
+              <polygon points={f.rearHole} fill="black" />
+              <polygon points={f.frontHole} fill="black" />
+            </mask>
+            <clipPath id={`${uid}r${i}`}><polygon points={f.rear} /></clipPath>
+            <clipPath id={`${uid}f${i}`}><polygon points={f.front} /></clipPath>
+          </g>
+        ))}
+      </defs>
+      {CROWD_FIGURES.map((f, i) => {
+        const delay = -((i * 0.37) % 1) * STEP;
+        const origin = `${f.c}px ${f.cy}px`;
+        const leg = (id: string, d: number) => (
+          <g className="walker-leg" style={{ transformOrigin: origin, animationDelay: `${d}s`, ["--lift" as string]: `${-f.lift}px` }}>
+            <image href={walkers.url} width={IMG_W} height={IMG_H} clipPath={`url(#${id})`} />
+          </g>
+        );
+        return (
+          <g key={i} className="walker-body" style={{ animationDelay: `${delay}s` }}>
+            <g clipPath={`url(#${uid}s${i})`}>
+              {leg(`${uid}r${i}`, delay - STEP / 2)}
+              <image href={walkers.url} width={IMG_W} height={IMG_H} mask={`url(#${uid}b${i})`} />
+            </g>
+            {leg(`${uid}f${i}`, delay)}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
 
 /** Cream-to-mint scroll transition with a continuously walking monochrome crowd. */
 export function WalkingCrowdTransition() {
@@ -59,26 +97,7 @@ export function WalkingCrowdTransition() {
       </div>
       <div className="relative mt-14 h-[150px] sm:h-[200px] md:h-[260px]" aria-hidden>
         <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
-          {[0, 1, 2, 3].map((c) => (
-            <div key={c} className="relative h-full" style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}>
-              {CUTS.slice(0, -1).map((a, i) => {
-                const b = CUTS[i + 1]!;
-                const w = b - a;
-                const delay = `${-((i * 0.37) % 1) * STEP}s`;
-                const img = { left: `${(-a / w) * 100}%`, width: `${(IMG_W / w) * 100}%` };
-                return (
-                  <div key={i} className="walker-strip absolute top-0 h-full" style={{ left: `${(a / IMG_W) * 100}%`, width: `${(w / IMG_W) * 100}%`, animationDelay: delay }}>
-                    <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: `${HIP * 100}%` }}>
-                      <img src={walkers.url} alt="" className="absolute top-0 max-w-none" style={{ ...img, height: `${100 / HIP}%` }} />
-                    </div>
-                    <div className="walker-legs absolute inset-x-0 bottom-0 overflow-hidden" style={{ top: `${HIP * 100}%`, animationDelay: delay }}>
-                      <img src={walkers.url} alt="" className="absolute bottom-0 max-w-none" style={{ ...img, height: `${100 / (1 - HIP)}%` }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
+          {[0, 1, 2, 3].map((c) => <CrowdTile key={c} tile={c} />)}
         </div>
       </div>
       <span className="sr-only">An illustrated crowd of people walking from the familiar world into an imagined one.</span>
