@@ -15,11 +15,7 @@ function CrowdTile({ tile }: { tile: number }) {
         {CROWD_FIGURES.map((f, i) => (
           <g key={i}>
             <clipPath id={`${uid}s${i}`}><rect x={f.x0} y={0} width={f.x1 - f.x0} height={IMG_H} /></clipPath>
-            <mask id={`${uid}b${i}`} maskUnits="userSpaceOnUse" x={0} y={0} width={IMG_W} height={IMG_H}>
-              <rect x={0} y={0} width={IMG_W} height={IMG_H} fill="white" />
-              <polygon points={f.rearHole} fill="black" />
-              <polygon points={f.frontHole} fill="black" />
-            </mask>
+            <clipPath id={`${uid}b${i}`}><path clipRule="evenodd" d={`M0 0H${IMG_W}V${IMG_H}H0Z M${f.rearHole.replace(/ /g, " L")}Z M${f.frontHole.replace(/ /g, " L")}Z`} /></clipPath>
             <clipPath id={`${uid}r${i}`}><polygon points={f.rear} /></clipPath>
             <clipPath id={`${uid}f${i}`}><polygon points={f.front} /></clipPath>
           </g>
@@ -37,7 +33,7 @@ function CrowdTile({ tile }: { tile: number }) {
           <g key={i} className="walker-body" style={{ animationDelay: `${delay}s` }}>
             <g clipPath={`url(#${uid}s${i})`}>
               {leg(`${uid}r${i}`, delay - STEP / 2)}
-              <image href={walkers.url} width={IMG_W} height={IMG_H} mask={`url(#${uid}b${i})`} />
+              <image href={walkers.url} width={IMG_W} height={IMG_H} clipPath={`url(#${uid}b${i})`} />
             </g>
             {leg(`${uid}f${i}`, delay)}
           </g>
