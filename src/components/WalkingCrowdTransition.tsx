@@ -1,49 +1,7 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useRef } from "react";
 import walkers from "@/assets/city-walkers.png.asset.json";
-import { CROWD_FIGURES } from "@/lib/crowd-geometry";
 
-const IMG_W = 1920;
-const IMG_H = 640;
-const STEP = 1.1;
-
-/** One tile of the crowd: each person's two legs are cut from the original art and swing from the hip in turn. */
-function CrowdTile({ tile }: { tile: number }) {
-  const uid = useId().replace(/:/g, "") + tile;
-  return (
-    <svg viewBox={`0 0 ${IMG_W} ${IMG_H}`} className="h-full w-auto shrink-0 overflow-visible" style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}>
-      <defs>
-        {CROWD_FIGURES.map((f, i) => (
-          <g key={i}>
-            <clipPath id={`${uid}s${i}`}><rect x={f.x0} y={0} width={f.x1 - f.x0} height={IMG_H} /></clipPath>
-            <clipPath id={`${uid}b${i}`}><path clipRule="evenodd" d={`M0 0H${IMG_W}V${IMG_H}H0Z M${f.rearHole.replace(/ /g, " L")}Z M${f.frontHole.replace(/ /g, " L")}Z`} /></clipPath>
-            <clipPath id={`${uid}r${i}`}><polygon points={f.rear} /></clipPath>
-            <clipPath id={`${uid}f${i}`}><polygon points={f.front} /></clipPath>
-          </g>
-        ))}
-      </defs>
-      {CROWD_FIGURES.map((f, i) => {
-        const delay = -((i * 0.37) % 1) * STEP;
-        const origin = `${f.c}px ${f.cy}px`;
-        const leg = (id: string, d: number) => (
-          <g className="walker-leg" style={{ transformOrigin: origin, animationDelay: `${d}s`, ["--lift" as string]: `${-f.lift}px` }}>
-            <image href={walkers.url} width={IMG_W} height={IMG_H} clipPath={`url(#${id})`} />
-          </g>
-        );
-        return (
-          <g key={i} className="walker-body" style={{ animationDelay: `${delay}s` }}>
-            <g clipPath={`url(#${uid}s${i})`}>
-              {leg(`${uid}r${i}`, delay - STEP / 2)}
-              <image href={walkers.url} width={IMG_W} height={IMG_H} clipPath={`url(#${uid}b${i})`} />
-            </g>
-            {leg(`${uid}f${i}`, delay)}
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-/** Cream-to-mint scroll transition with a continuously walking monochrome crowd. */
+/** Cream-to-mint scroll transition with the intact crowd gliding horizontally. */
 export function WalkingCrowdTransition() {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -93,7 +51,9 @@ export function WalkingCrowdTransition() {
       </div>
       <div className="relative mt-14 h-[150px] sm:h-[200px] md:h-[260px]" aria-hidden>
         <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
-          {[0, 1, 2, 3].map((c) => <CrowdTile key={c} tile={c} />)}
+          {[0, 1, 2, 3].map((c) => (
+            <img key={c} src={walkers.url} alt="" width={1920} height={640} className="crowd-tile" draggable={false} />
+          ))}
         </div>
       </div>
       <span className="sr-only">An illustrated crowd of people walking from the familiar world into an imagined one.</span>
