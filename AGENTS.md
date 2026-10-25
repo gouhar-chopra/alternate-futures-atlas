@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Render the transition crowd as repeated intact asset images with one CSS track animation, rather than per-person SVG clipping, to keep rendering lightweight and preserve the artwork.
+- Keep scenario generation in the existing createServerFn using the managed AI Gateway Responses interface; read credentials inside the handler and log only status codes because SDK errors may contain request secrets.

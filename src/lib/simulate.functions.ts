@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { DecisionInputSchema, parseScenarioText, type Scenario } from "./scenario";
+import { simulationFailure } from "./simulate-errors";
 
 export type SimulateResult =
   | { ok: true; scenario: Scenario }
@@ -24,7 +25,7 @@ export const simulateScenario = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => DecisionInputSchema.parse(d))
   .handler(async ({ data }): Promise<SimulateResult> => {
     const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) return { ok: false, code: "not_configured", message: "Live generation is not configured. You can still explore the demo scenario." };
+    if (!apiKey) return { ok: false, code: "not_configured", message: "LOVABLE_API_KEY is not available in this server environment. Lovable manages it in the hosted project; a local server does not automatically inherit it. You can still explore the demo scenario." };
 
     const { createOpenAI } = await import("@ai-sdk/openai");
     const { streamText } = await import("ai");
@@ -62,9 +63,11 @@ export const simulateScenario = createServerFn({ method: "POST" })
     try {
       const result = streamText({
         model: provider.responses("openai/gpt-6-astra"),
-        system: SYSTEM,
+        instructions: SYSTEM,
         messages: [{ role: "user", content: user }],
         maxRetries: 0,
+        // SDK errors can carry request headers: never log the error object.
+        onError: ({ error }) => console.error("simulate gateway error", (error as { statusCode?: number })?.statusCode ?? "stream"),
         providerOptions: {
           openai: { store: false, forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", include: ["reasoning.encrypted_content"] },
         },
@@ -78,9 +81,7 @@ export const simulateScenario = createServerFn({ method: "POST" })
       };
     } catch (e) {
       const status = (e as { statusCode?: number })?.statusCode;
-      console.error("simulate failed", status, e);
-      if (status === 429) return { ok: false, code: "rate_limited", message: "Too many simulations at once. Please wait a moment and try again." };
-      if (status === 402 || status === 403) return { ok: false, code: "credits", message: "AI generation is currently unavailable for this workspace (credits or limits). Try the demo scenario meanwhile." };
-      return { ok: false, code: "network", message: "We couldn't reach the simulation service. Your decision is saved — please try again." };
+      console.error("simulate failed", status ?? "network");
+      return simulationFailure(e);
     }
   });
