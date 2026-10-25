@@ -85,6 +85,17 @@
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 }
 
+@utility wordmark {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.32rem;
+  line-height: 1;
+  letter-spacing: 0.015em;
+  color: var(--ink);
+  font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
+}
 @utility eyebrow {
   font-family: var(--font-mono);
   font-size: 0.72rem;
