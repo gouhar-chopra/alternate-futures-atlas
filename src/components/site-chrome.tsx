@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Wordmark() {
-  return <span className="font-serif text-xl font-bold italic tracking-tight">ELSEWHERE</span>;
+  return <span className="wordmark">ELSEWHERE</span>;
 }
 
 export function SiteNavigation() {
