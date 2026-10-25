@@ -103,7 +103,7 @@
 .reveal.in { opacity: 1; transform: none; }
 
 /* Only the intact crowd track moves; the artwork itself is never deformed. */
-@keyframes crowd-walk { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+@keyframes crowd-walk { from { transform: translate3d(-50%,0,0); } to { transform: translate3d(0,0,0); } }
 .crowd-track { display: flex; align-items: flex-end; width: max-content; animation: crowd-walk 90s linear infinite; will-change: transform; color: var(--foreground); }
 .crowd-tile { display: block; flex: 0 0 auto; height: 100%; width: auto; max-width: none; aspect-ratio: 3 / 1; }
 
