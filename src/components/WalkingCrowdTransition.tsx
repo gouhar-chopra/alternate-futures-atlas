@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import walkers from "@/assets/city-walkers.png.asset.json";
+import walkersSrc from "@/assets/city-walkers.png";
 
 /** Cream-to-mint scroll transition with the intact crowd gliding horizontally. */
 export function WalkingCrowdTransition() {
@@ -50,9 +50,9 @@ export function WalkingCrowdTransition() {
         </div>
       </div>
       <div className="relative mt-14 h-[150px] sm:h-[200px] md:h-[260px]" aria-hidden>
-        <div className="crowd-track absolute bottom-0 left-0 h-full" style={{ animationDirection: "reverse" }}>
+        <div className="crowd-track absolute bottom-0 left-0 h-full">
           {[0, 1, 2, 3].map((c) => (
-            <img key={c} src={walkers.url} alt="" width={1920} height={640} className="crowd-tile" draggable={false} />
+            <img key={c} src={walkersSrc} alt="" width={1920} height={640} className="crowd-tile" draggable={false} />
           ))}
         </div>
       </div>
