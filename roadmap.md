@@ -1,0 +1,5 @@
+- [x] Inspect existing scenario requests and configured secret names.
+- [x] Verify managed Gateway/model access and a live preview server-function submission.
+- [x] Preserve the UI/schema and tighten server-only configuration/error handling.
+- [ ] Run focused tests and verify generation after changes.
+- [x] Document the distinction between hosted credentials and local development.
