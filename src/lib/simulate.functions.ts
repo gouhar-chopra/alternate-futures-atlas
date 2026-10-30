@@ -24,7 +24,7 @@ Respond ONLY with one JSON object, no prose, matching:
 export const simulateScenario = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => DecisionInputSchema.parse(d))
   .handler(async ({ data }): Promise<SimulateResult> => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
+    const apiKey = process.env["GEMINI_API_KEY"];
     if (!apiKey) return { ok: false, code: "not_configured", message: "LOVABLE_API_KEY is not available in this server environment. Lovable manages it in the hosted project; a local server does not automatically inherit it. You can still explore the demo scenario." };
 
     const { createOpenAI } = await import("@ai-sdk/openai");
@@ -60,28 +60,73 @@ export const simulateScenario = createServerFn({ method: "POST" })
       `Produce ${timelineCount} distinct timelines.`,
     ].filter(Boolean).join("\n");
 
-    try {
-      const result = streamText({
-        model: provider.responses("openai/gpt-6-astra"),
-        instructions: SYSTEM,
-        messages: [{ role: "user", content: user }],
-        maxRetries: 0,
-        // SDK errors can carry request headers: never log the error object.
-        onError: ({ error }) => console.error("simulate gateway error", (error as { statusCode?: number })?.statusCode ?? "stream"),
-        providerOptions: {
-          openai: { store: false, forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", include: ["reasoning.encrypted_content"] },
-        },
-      });
-      const text = await result.text;
-      const parsed = parseScenarioText(text);
-      if (!parsed) return { ok: false, code: "invalid_output", message: "The simulation came back in an unexpected shape. Please try again." };
-      return {
-        ok: true,
-        scenario: { ...parsed, id: crypto.randomUUID().slice(0, 8), mode: "live", created_at: new Date().toISOString(), input: data },
-      };
-    } catch (e) {
-      const status = (e as { statusCode?: number })?.statusCode;
-      console.error("simulate failed", status ?? "network");
-      return simulationFailure(e);
-    }
+  
+try {
+  const { GoogleGenAI } = await import("@google/genai");
+  const ai = new GoogleGenAI({ apiKey });
+
+  const result = await ai.models.generateContent({
+    model: "gemini-3.6-flash",
+    contents: user,
+    config: {
+      systemInstruction: SYSTEM,
+      responseMimeType: "application/json",
+      maxOutputTokens: 12000,
+    },
+  });
+
+  const text = result.text;
+  const parsed = text ? parseScenarioText(text) : null;
+
+  if (!parsed) {
+    return {
+      ok: false,
+      code: "invalid_output",
+      message: "The simulation came back in an unexpected shape. Please try again.",
+    };
+  }
+
+  return {
+    ok: true,
+    scenario: {
+      ...parsed,
+      id: crypto.randomUUID().slice(0, 8),
+      mode: "live",
+      created_at: new Date().toISOString(),
+      input: data,
+    },
+  };
+} catch (e) {
+  const error = e as { status?: number; statusCode?: number };
+  const status = error.status ?? error.statusCode;
+
+  console.error("Gemini simulation failed", status ?? "network");
+
+  if (status === 429) {
+    return {
+      ok: false,
+      code: "rate_limited",
+      message: "Gemini's request limit has been reached. Please wait and try again.",
+    };
+  }
+
+  if (status === 401 || status === 403) {
+    return {
+      ok: false,
+      code: "not_configured",
+      message: "Gemini authentication failed. Check your API key and project access.",
+    };
+  }
+  if (status === 503) {
+  return {
+    ok: false,
+    code: "network",
+    message:
+      "Gemini is temporarily unavailable or overloaded. Please wait a little and try again.",
+  };
+}
+
+  return simulationFailure(e);
+}
+
   });
